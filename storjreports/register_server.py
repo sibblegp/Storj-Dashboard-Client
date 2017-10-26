@@ -74,6 +74,14 @@ def register_server(email, password, server_name):
         exit(1)
 
 def find_storjshare():
+    global STORJSHAREPATH
+    env = os.environ
+    proc = subprocess.Popen(['which', 'storjshare'], env=env, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    results = proc.communicate()
+    possible_path = results[0].decode('utf-8').replace('\n', '')
+    if '/' in possible_path:
+        STORJSHAREPATH = possible_path
+        return
     user_directories = scandir('/home')
     for directory in user_directories:
         if directory.is_dir():
