@@ -24,7 +24,11 @@ def examine_configs(path):
     print('All reports sent')
 
 def get_size_of_path(path):
-    details = scandir(path)
+    try:
+        details = scandir(path)
+    except FileNotFoundError:
+        print('Path does not exist: ' + path)
+        return 0
     size = 0
     for item in details:
         if item.is_dir():
@@ -62,15 +66,23 @@ def examine_storjstatus():
 
 def send_report(config_file, report_uuid, storj_node_pairs):
     node_name = config_file.name.split('.')[0]
-    open_config_file = open(config_file.path, 'r')
+    open_config_file = open(config_file.path, 'r', encoding='utf-8')
     config_contents = open_config_file.read()
     config_contents = re.sub(r'\\\n', '', config_contents)
-    config_contents = re.sub(r' //.*\n', '\n', config_contents)
-    json_config = json.loads(config_contents)
+    config_contents = re.sub(r'// .*\n', '', config_contents)
+    try:
+        json_config = json.loads(config_contents)
+    except json.JSONDecodeError:
+        print('Unable to decode JSON file: ' + config_file.name)
+        return False
 
-    storage_path = json_config['storagePath']
+    try:
+        storage_path = json_config['storagePath']
+        capacity_line = json_config['storageAllocation']
+    except KeyError:
+        print('Missing Keys in Config File')
+        return False
     current_size = get_size_of_path(storage_path)
-    capacity_line = json_config['storageAllocation']
     if 'GB' in capacity_line:
         capacity_gb = float(capacity_line.split('GB')[0])
         capacity = capacity_gb * 1000 * 1000000

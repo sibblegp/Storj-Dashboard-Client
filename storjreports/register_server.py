@@ -78,6 +78,9 @@ def find_storjshare():
     for directory in user_directories:
         if directory.is_dir():
             look_for_storj(directory.path)
+    if STORJSHAREPATH == None:
+        look_for_storj('/usr/local/bin')
+
 
 def look_for_storj(directory):
     global STORJSHAREPATH
@@ -108,7 +111,7 @@ def create_settings_file(server_uuid, configs_directory):
 
 def create_cron_job():
     env = os.environ
-    env = env + ':/usr/local/bin'
+    env['PATH'] = env.get('PATH') + ':/usr/local/bin'
     proc = subprocess.Popen(['which', 'send_storj_reports'], env=env, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     results = proc.communicate()
     if '/' in results[0].decode('utf-8'):
@@ -118,6 +121,8 @@ def create_cron_job():
         job.minute.on(minute)
         try:
             system_cron.write()
+            update_proc = subprocess.Popen(['service', 'cron', 'reload'])
+            results = update_proc.communicate()
         except PermissionError:
             print('Unable to create cron job.  Exiting.')
             exit(1)
