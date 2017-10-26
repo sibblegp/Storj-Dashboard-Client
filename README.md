@@ -42,7 +42,7 @@ It's finally time to set up the client.  First, we need to make sure of a few th
 * All of your configuration files should be in their own directory.
 * Your config files should be in standard format without any additional comments.
 
-Let's configure the client:
+Let's configure the client.  You may wonder why this requires sudo access.  This is because registration writes a config file to /etc and creates a cron job to hourly submit reports.
 
 ```
 sudo register_storjdash
