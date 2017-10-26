@@ -108,6 +108,7 @@ def create_settings_file(server_uuid, configs_directory):
 
 def create_cron_job():
     env = os.environ
+    env = env + ':/usr/local/bin'
     proc = subprocess.Popen(['which', 'send_storj_reports'], env=env, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     results = proc.communicate()
     if '/' in results[0].decode('utf-8'):

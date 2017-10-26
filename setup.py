@@ -3,7 +3,7 @@
 from setuptools import setup
 
 setup(name='storjdash',
-      version='0.2.3',
+      version='0.2.4',
       description='Storj Reporter',
       packages=['storjreports'],
       author='George Sibble',
