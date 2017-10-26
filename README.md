@@ -4,7 +4,7 @@
   <img src="https://s3-us-west-1.amazonaws.com/storjdashgeneral/Screenshot+2017-10-25+18.35.13.png" alt="Dashboard">
 </p>
 
-Welcome to the StorJ Dashboard client.  This is the server module for [www.storjdash.com](https://www.storjdash.com/) and can be used to monitor [StorJ](https://storj.io) farming nodes on as many servers as you'd like.  It is provided free of charge.
+Welcome to the StorJ Dashboard client.  This is the installable client module for [www.storjdash.com](https://www.storjdash.com/) and can be used to monitor [StorJ](https://storj.io) farming nodes on as many servers as you'd like.  It is provided free of charge.
 
 ### This software is currently in beta testing.
 
