@@ -67,8 +67,21 @@ def examine_storjstatus():
 
 def send_report(config_file, report_uuid, storj_node_pairs):
     node_name = config_file.name.split('.')[0]
-    open_config_file = open(config_file.path, 'r', encoding='utf-8')
-    config_contents = open_config_file.read()
+    try:
+        open_config_file = open(config_file.path, 'r', encoding='utf-8')
+        config_contents = open_config_file.read()
+    except UnicodeDecodeError:
+        try:
+            open_config_file = open(config_file.path, 'r', encoding='latin-1')
+            config_contents = open_config_file.read()
+        except UnicodeDecodeError:
+            try:
+                open_config_file = open(config_file.path, 'r')
+                config_contents = open_config_file.read()
+            except UnicodeDecodeError:
+                print('Unable to read config file: ' + config_file.path)
+                return
+
     config_contents = re.sub(r'\\\n', '', config_contents)
     config_contents = re.sub(r'//.*\n', '', config_contents)
 

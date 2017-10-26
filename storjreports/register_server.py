@@ -38,7 +38,7 @@ def gather_information():
         print('Invalid user')
         exit(1)
 
-    server_name = input('What is the name of this server: ')
+    server_name = input('What is the name of this server (for reference on the site): ')
     configs_directory = input('(VERY IMPORTANT) What directory holds your StorJ Configuration files: ')
 
     server_uuid = register_server(email=user_email, password=password, server_name=server_name)
@@ -83,6 +83,8 @@ def find_storjshare():
         STORJSHAREPATH = possible_path
         return
     user_directories = scandir('/home')
+
+    #TODO:  Look in .nvm directories first
     for directory in user_directories:
         if directory.is_dir():
             look_for_storj(directory.path)
