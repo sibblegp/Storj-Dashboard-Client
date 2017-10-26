@@ -115,8 +115,9 @@ def create_cron_job():
     proc = subprocess.Popen(['which', 'send_storj_reports'], env=env, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     results = proc.communicate()
     if '/' in results[0].decode('utf-8'):
+        reports_command = results[0].decode('utf-8').replace('\n', '')
         system_cron = CronTab(tabfile='/etc/crontab', user=False)
-        job = system_cron.new(command=results[0].decode('utf-8') + ' >>/var/log/storj_reports.log 2>&1', user='root')
+        job = system_cron.new(command=reports_command + ' >>/var/log/storj_reports.log 2>&1', user='root')
         minute = randint(0, 59)
         job.minute.on(minute)
         try:
@@ -132,3 +133,4 @@ def create_cron_job():
 
 if __name__ == '__main__':
     gather_information()
+    
