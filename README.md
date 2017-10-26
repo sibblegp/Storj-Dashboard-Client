@@ -38,10 +38,9 @@ sudo pip3 install storjdash
 ```
 It's finally time to set up the client.  First, we need to make sure of a few things.
 
-* NVM/storjshare should be installed somewhere under /home
-* All of your active configuration files should be in their own directory
-* Your config files should be in standard format without any additional comments
-* You should have a registered account at [StorjDash](https://www.storjdash.com/)
+* You will need to enter your StorJDash login details.  You should have a registered account at [StorjDash](https://www.storjdash.com/).
+* All of your configuration files should be in their own directory.
+* Your config files should be in standard format without any additional comments.
 
 Let's configure the client:
 
