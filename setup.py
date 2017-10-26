@@ -8,7 +8,7 @@ setup(name='storjdash',
       packages=['storjreports'],
       author='George Sibble',
       author_email='gsibble@storjdash.com',
-      python_requires='~=3.5',
+      python_requires='>=3.5',
       url='https://github.com/sibblegp/Storj-Dashboard-Client',
       install_requires=[
             'requests==2.18.4',
