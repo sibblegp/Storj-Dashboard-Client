@@ -26,7 +26,7 @@ As long as it is above 3.5 you are okay.  If it is not or the command does not r
 Next we need to install the python 3 package manager:
 
 ```
-sudo apt-get install python3-pip
+sudo apt-get install python3-pip python3-setuptools python3-wheel
 ```
 
 Now it's time for the fun stuff.  Time to install our StorJ Dashboard Client.
@@ -68,6 +68,13 @@ You can obtain support in several ways:
 * Private Message @gs in the storjshare or dev channels at the [StorJ Community](https://community.storj.io/)
 * Send an email to [support@storjdash.com](mailto:support@storjdash.com)
 * Submit an issue on this GitHub repo
+
+Supported Operating Systems:
+
+* Ubuntu 14.*
+* Ubuntu 16.*
+* Debian 9.*
+* Devuan Ascii (9.*)
 
 ### Donations
 
