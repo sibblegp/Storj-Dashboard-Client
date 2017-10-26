@@ -15,6 +15,7 @@ STORJSHARE_PATH = None
 
 def examine_configs(path):
     storj_node_pairs = examine_storjstatus()
+    #storj_node_pairs = None
     #print(storj_node_pairs)
     report_uuid = str(uuid.uuid4())
     config_files = os.scandir(path)
@@ -69,12 +70,17 @@ def send_report(config_file, report_uuid, storj_node_pairs):
     open_config_file = open(config_file.path, 'r', encoding='utf-8')
     config_contents = open_config_file.read()
     config_contents = re.sub(r'\\\n', '', config_contents)
-    config_contents = re.sub(r'// .*\n', '', config_contents)
+    config_contents = re.sub(r'//.*\n', '', config_contents)
+
     try:
         json_config = json.loads(config_contents)
     except json.JSONDecodeError:
-        print('Unable to decode JSON file: ' + config_file.name)
-        return False
+        try:
+            config_contents = re.sub(r'https.*\n', '"', config_contents)
+            json_config = json.loads(config_contents)
+        except json.JSONDecodeError:
+            print('Unable to decode JSON file: ' + config_file.name)
+            return False
 
     try:
         storage_path = json_config['storagePath']

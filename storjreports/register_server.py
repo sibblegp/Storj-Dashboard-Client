@@ -80,7 +80,8 @@ def find_storjshare():
             look_for_storj(directory.path)
     if STORJSHAREPATH == None:
         look_for_storj('/usr/local/bin')
-
+    if STORJSHAREPATH == None:
+        look_for_storj('/root')
 
 def look_for_storj(directory):
     global STORJSHAREPATH
