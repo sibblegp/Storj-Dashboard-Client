@@ -43,8 +43,8 @@ def gather_information():
 
     server_uuid = register_server(email=user_email, password=password, server_name=server_name)
 
-    create_settings_file(server_uuid=server_uuid, configs_directory=configs_directory)
     create_cron_job()
+    create_settings_file(server_uuid=server_uuid, configs_directory=configs_directory)
 
     print('Your server has been registered and you should start seeing data reported on www.storjdash.com within the hour')
     exit()
@@ -133,4 +133,3 @@ def create_cron_job():
 
 if __name__ == '__main__':
     gather_information()
-    
