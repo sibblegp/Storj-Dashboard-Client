@@ -68,6 +68,18 @@ If you don't see this output or you see an error, seek support below.
 
 ### Support
 
+#### Common Questions
+
+Why do you need root access when registering?
+
+* We need root because we create a settings file in /etc and create a cron job
+
+What should I do if I put in the wrong configs directory or I move them?
+
+* You can edit the "configs_directory" setting in /etc/storjdash.json
+
+#### Obtaining Support
+
 You can obtain support in several ways:
 
 * Private Message @gs in the storjshare or dev channels at the [StorJ Community](https://community.storj.io/)
