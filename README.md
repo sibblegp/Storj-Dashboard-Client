@@ -31,7 +31,7 @@ As long as it is above 3.5 you are okay.  If it is not or the command does not r
 Next we need to install the python 3 package manager:
 
 ```
-sudo apt-get install python3-pip python3-setuptools python3-wheel
+sudo apt-get install -y python3-pip python3-setuptools python3-wheel
 ```
 
 Now it's time for the fun stuff.  Time to install our StorJ Dashboard Client.

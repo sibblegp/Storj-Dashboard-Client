@@ -83,14 +83,17 @@ def send_report(config_file, report_uuid, storj_node_pairs):
                 return
 
     config_contents = re.sub(r'\\\n', '', config_contents)
-    config_contents = re.sub(r'//.*\n', '', config_contents)
-
+    regexed_config = ''
+    for line in config_contents.split('\n'):
+        if 'https' not in line:
+            regexed_config += (re.sub(r'//.*', '', line) + '\n')
+    #print(regexed_config)
     try:
-        json_config = json.loads(config_contents)
+        json_config = json.loads(regexed_config)
     except json.JSONDecodeError:
         try:
-            config_contents = re.sub(r'https.*\n', '"', config_contents)
-            json_config = json.loads(config_contents)
+            config_contents = re.sub(r'https.*\n', '"', regexed_config)
+            json_config = json.loads(regexed_config)
         except json.JSONDecodeError:
             print('Unable to decode JSON file: ' + config_file.name)
             return False
