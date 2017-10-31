@@ -6,6 +6,7 @@ import os
 import re
 import uuid
 import subprocess
+import pkg_resources
 
 
 from os import scandir
@@ -14,6 +15,7 @@ SERVER_UUID = None
 STORJSHARE_PATH = None
 
 def examine_configs(path):
+    version = pkg_resources.get_distribution("storjdash").version
     storj_node_pairs = examine_storjstatus()
     #storj_node_pairs = None
     #print(storj_node_pairs)
@@ -21,7 +23,7 @@ def examine_configs(path):
     config_files = os.scandir(path)
     for config_file in config_files:
         if config_file.is_file():
-            send_report(config_file, report_uuid, storj_node_pairs)
+            send_report(config_file, report_uuid, storj_node_pairs, version)
     print('All reports sent')
 
 def get_size_of_path(path):
@@ -65,7 +67,7 @@ def examine_storjstatus():
             node_pairs[node_path] = node_id
     return node_pairs
 
-def send_report(config_file, report_uuid, storj_node_pairs):
+def send_report(config_file, report_uuid, storj_node_pairs, version):
     node_name = config_file.name.split('.')[0]
     try:
         open_config_file = open(config_file.path, 'r', encoding='utf-8')
@@ -119,7 +121,8 @@ def send_report(config_file, report_uuid, storj_node_pairs):
         'report_uuid': report_uuid,
         'node_name': node_name,
         'current_size': current_size,
-        'node_capacity': capacity
+        'node_capacity': capacity,
+        'version': version
     }
 
     if storage_path in storj_node_pairs.keys():

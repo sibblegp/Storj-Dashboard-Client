@@ -70,6 +70,14 @@ If you don't see this output or you see an error, seek support below.
 
 #### Common Questions
 
+How do I upgrade the client and how often should I?
+
+* You should upgrade the client as often as you can as fixes are released frequently.  Run the following command.
+
+```
+sudo pip3 install storjdash --upgrade
+```
+
 Why do you need root access when registering?
 
 * We need root because we create a settings file in /etc and create a cron job
