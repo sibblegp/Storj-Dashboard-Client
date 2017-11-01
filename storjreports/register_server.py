@@ -97,7 +97,7 @@ def look_for_storj(directory):
     global STORJSHAREPATH
     details = scandir(directory)
     for item in details:
-        if item.is_dir():
+        if item.is_dir() and item.is_symlink() is False:
             look_for_storj(item.path)
         else:
             if item.name == 'storjshare':
