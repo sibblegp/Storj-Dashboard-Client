@@ -1,14 +1,25 @@
 import win32service
 import win32serviceutil
 import win32event
+import win32evtlog
+from time import sleep
+import nt
+import winreg
+import zipimport
+import ntpath
+import win32con
+import winerror
+import pywintypes
+import _win32sysloader
+import servicemanager
 
 
 class PySvc(win32serviceutil.ServiceFramework):
     # you can NET START/STOP the service by the following name
-    _svc_name_ = "GSSvc"
+    _svc_name_ = "GSSvc3"
     # this text shows up as the service name in the Service
     # Control Manager (SCM)
-    _svc_display_name_ = "George's Test Service"
+    _svc_display_name_ = "George's Test Service 3"
     # this text shows up as the description in the SCM
     _svc_description_ = "This service writes stuff to a file"
 
@@ -21,20 +32,28 @@ class PySvc(win32serviceutil.ServiceFramework):
 
 
     def SvcDoRun(self):
-        import servicemanager
+
+        #servicemanager.LogInfoMsg('Starting to run')
         self.ReportServiceStatus(win32service.SERVICE_RUNNING)
-        f = open('test.dat', 'w+')
+        #servicemanager.LogInfoMsg('Opening File')
+        #f = open('test.dat', 'w+')
         rc = None
 
+        #servicemanager.LogInfoMsg('Entering While Loop')
         # if the stop event hasn't been fired keep looping
         while rc != win32event.WAIT_OBJECT_0:
-            f.write('TEST DATA\n')
-            f.flush()
+            import sys
+            service_modules = sys.modules.keys()
+            servicemanager.LogInfoMsg(str(service_modules))
+            #f.write('TEST DATA\n')
+            #f.flush()
+            #sleep(1000)
             # block for 5 seconds and listen for a stop event
             rc = win32event.WaitForSingleObject(self.hWaitStop, 60000)
 
-        f.write('SHUTTING DOWN\n')
-        f.close()
+        #servicemanager.LogInfoMsg('Exiting While Loop')
+        #f.write('SHUTTING DOWN\n')
+        #f.close()
 
         # called when we're being shut down
 
@@ -46,4 +65,10 @@ class PySvc(win32serviceutil.ServiceFramework):
 
 
 if __name__ == '__main__':
-    win32serviceutil.HandleCommandLine(PySvc)
+    import sys
+    if len(sys.argv) == 1:
+        servicemanager.Initialize()
+        servicemanager.PrepareToHostSingle(PySvc)
+        servicemanager.StartServiceCtrlDispatcher()
+    else:
+        win32serviceutil.HandleCommandLine(PySvc)
