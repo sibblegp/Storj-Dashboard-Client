@@ -2,8 +2,10 @@
 
 from setuptools import setup
 
+VERSION = '0.3.6'
+
 setup(name='storjdash',
-      version='0.3.6',
+      version=VERSION,
       description='Storj Reporter',
       packages=['storjreports'],
       author='George Sibble',

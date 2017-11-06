@@ -12,16 +12,17 @@ import winerror
 import pywintypes
 import _win32sysloader
 import servicemanager
+from storjreports import send_storj_reports
 
 
 class PySvc(win32serviceutil.ServiceFramework):
     # you can NET START/STOP the service by the following name
-    _svc_name_ = "GSSvc3"
+    _svc_name_ = "StorKDashSVC"
     # this text shows up as the service name in the Service
     # Control Manager (SCM)
-    _svc_display_name_ = "George's Test Service 3"
+    _svc_display_name_ = "StorJDash Client Service"
     # this text shows up as the description in the SCM
-    _svc_description_ = "This service writes stuff to a file"
+    _svc_description_ = "StorJDash.com client service for reporting StorJ storage"
 
     def __init__(self, args):
         win32serviceutil.ServiceFramework.__init__(self, args)
@@ -42,14 +43,10 @@ class PySvc(win32serviceutil.ServiceFramework):
         #servicemanager.LogInfoMsg('Entering While Loop')
         # if the stop event hasn't been fired keep looping
         while rc != win32event.WAIT_OBJECT_0:
-            import sys
-            service_modules = sys.modules.keys()
-            servicemanager.LogInfoMsg(str(service_modules))
-            #f.write('TEST DATA\n')
-            #f.flush()
+            send_storj_reports.windows_main()
             #sleep(1000)
             # block for 5 seconds and listen for a stop event
-            rc = win32event.WaitForSingleObject(self.hWaitStop, 60000)
+            rc = win32event.WaitForSingleObject(self.hWaitStop, 3600000)
 
         #servicemanager.LogInfoMsg('Exiting While Loop')
         #f.write('SHUTTING DOWN\n')

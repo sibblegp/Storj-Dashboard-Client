@@ -14,16 +14,25 @@ from os import scandir
 SERVER_UUID = None
 STORJSHARE_PATH = None
 
-def examine_configs(path):
-    version = pkg_resources.get_distribution("storjdash").version
-    storj_node_pairs = examine_storjstatus()
+WINDOWS_VERSION = '0.2.0'
+
+def examine_configs(path, windows=False):
+    if windows is False:
+        version = pkg_resources.get_distribution("storjdash").version
+    else:
+        version = WINDOWS_VERSION
+    #version = '0.6.3'
+    if windows == False:
+        storj_node_pairs = examine_storjstatus()
+    else:
+        storj_node_pairs = None
     #storj_node_pairs = None
     #print(storj_node_pairs)
     report_uuid = str(uuid.uuid4())
     config_files = os.scandir(path)
     for config_file in config_files:
         if config_file.is_file():
-            send_report(config_file, report_uuid, storj_node_pairs, version)
+            send_report(config_file, report_uuid, storj_node_pairs, version, windows)
     print('All reports sent')
 
 def get_size_of_path(path):
@@ -67,7 +76,7 @@ def examine_storjstatus():
             node_pairs[node_path] = node_id
     return node_pairs
 
-def send_report(config_file, report_uuid, storj_node_pairs, version):
+def send_report(config_file, report_uuid, storj_node_pairs, version, windows):
     node_name = config_file.name.split('.')[0]
     try:
         open_config_file = open(config_file.path, 'r', encoding='utf-8')
@@ -125,8 +134,11 @@ def send_report(config_file, report_uuid, storj_node_pairs, version):
         'version': version
     }
 
-    if storage_path in storj_node_pairs.keys():
-        report_json['storj_node_id'] = storj_node_pairs[storage_path]
+    if windows is False:
+        if storage_path in storj_node_pairs.keys():
+            report_json['storj_node_id'] = storj_node_pairs[storage_path]
+    else:
+        report_json['storj_node_id'] = node_name
 
     print('Sending report for node ' + node_name)
     print(report_json)
@@ -149,4 +161,23 @@ def main():
             print('Corrupted config file.  Exiting.')
     except FileNotFoundError:
         print('Settings File Not Found.  Exiting.')
+        exit(1)
+
+def windows_main():
+    global SERVER_UUID
+    try:
+        import winreg
+        local_machine_reg = winreg.ConnectRegistry(None, winreg.HKEY_LOCAL_MACHINE)
+        storj_dash_settings = winreg.OpenKey(local_machine_reg, 'Software\StorJDash\StorJDashClient\Settings')
+        try:
+            SERVER_UUID = winreg.QueryValueEx(storj_dash_settings, 'serverID')[0]
+            configs_directory = winreg.QueryValueEx(storj_dash_settings, 'configPath')[0]
+            print(SERVER_UUID)
+            print(configs_directory)
+            examine_configs(configs_directory, windows=True)
+        except FileNotFoundError:
+            print('Registry Keys Missing. Server not properly setup.')
+            exit(1)
+    except ImportError:
+        print('Unable to import winreg. Are you on the right OS?')
         exit(1)

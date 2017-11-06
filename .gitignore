@@ -101,3 +101,4 @@ ENV/
 .mypy_cache/
 /reports_env
 /.idea
+/env_client
