@@ -108,3 +108,13 @@ If you enjoy StorJDash, you can support it by donating StorJ Tokens or ETH to:
 ```
 0xabA365D78086b1e9A12555A656AEc0cB92B8f9CA
 ```
+
+And BTC to:
+
+```
+1KnTsXcEMWnmF4pwHJzT9wKzfujaFmFbeD
+```
+
+## Donators
+
+* koelie
