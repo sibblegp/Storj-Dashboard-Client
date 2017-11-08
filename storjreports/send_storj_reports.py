@@ -14,13 +14,13 @@ from os import scandir
 SERVER_UUID = None
 STORJSHARE_PATH = None
 
-WINDOWS_VERSION = '0.2.0'
+STORJ_WINDOWS_VERSION = '0.2.0'
 
 def examine_configs(path, windows=False):
-    if windows is False:
+    if windows == False:
         version = pkg_resources.get_distribution("storjdash").version
     else:
-        version = WINDOWS_VERSION
+        version = STORJ_WINDOWS_VERSION
     #version = '0.6.3'
     if windows == False:
         storj_node_pairs = examine_storjstatus()
@@ -142,6 +142,11 @@ def send_report(config_file, report_uuid, storj_node_pairs, version, windows):
 
     print('Sending report for node ' + node_name)
     print(report_json)
+    if windows is True:
+        import servicemanager
+        servicemanager.LogInfoMsg('Sending report for node' + node_name)
+        servicemanager.LogInfoMsg(str(report_json))
+
     requests.post('https://www.storjdash.com/report', json=report_json)
 
 def main():

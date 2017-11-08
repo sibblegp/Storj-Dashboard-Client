@@ -17,7 +17,7 @@ from storjreports import send_storj_reports
 
 class PySvc(win32serviceutil.ServiceFramework):
     # you can NET START/STOP the service by the following name
-    _svc_name_ = "StorKDashSVC"
+    _svc_name_ = "StorJDashSVC"
     # this text shows up as the service name in the Service
     # Control Manager (SCM)
     _svc_display_name_ = "StorJDash Client Service"
