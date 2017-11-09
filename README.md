@@ -6,11 +6,15 @@
 
 Welcome to the StorJ Dashboard client.  This is the installable client module for [www.storjdash.com](https://www.storjdash.com/) and can be used to monitor [StorJ](https://storj.io) farming nodes on as many servers as you'd like.  It is provided free of charge.
 
-### This software is currently in beta testing.
+## Windows Installation
 
-### Currently the client only works on Ubuntu and Debian distributions.
+Please go to the [releases](https://github.com/sibblegp/Storj-Dashboard-Client/releases) page for the latest Windows installer.
 
-### Stop now if you are using any other operating system.
+## Linux Installation
+
+### Currently the client only works on Ubuntu and Debian 9.X+ distributions.
+
+### Stop now if you are using any other Linux operating system.
 
 To get started, [register for an account at StorJDash.com](https://www.storjdash.com/register/).  You will need these credentials later.
 
@@ -66,11 +70,22 @@ If all is working, you should see at least one output like this:
 ```
 If you don't see this output or you see an error, seek support below.
 
-### Support
+## Support
 
-#### Common Questions
+### Common Questions
+
+#### Windows
 
 How do I upgrade the client and how often should I?
+
+* You should upgrade the client whenever there is a new release.  Please go to the [releases](https://github.com/sibblegp/Storj-Dashboard-Client/releases) page for the latest Windows installer.
+
+Why is the code not signed or why does it say Unknown Publisher when installing?
+
+* Code signature licenses are expensive and would increase the price of this project immensely.  Furthermore, obtaining one requires that I have a landline and seriously, who has a landline these days?
+
+
+#### Linux
 
 * You should upgrade the client as often as you can as fixes are released frequently.  Run the following command.
 
@@ -86,7 +101,7 @@ What should I do if I put in the wrong configs directory or I move them?
 
 * You can edit the "configs_directory" setting in /etc/storjdash.json
 
-#### Obtaining Support
+### Obtaining Support
 
 You can obtain support in several ways:
 
@@ -101,7 +116,7 @@ Supported Operating Systems:
 * Debian 9.*
 * Devuan Ascii (9.*)
 
-### Donations
+## Donations
 
 If you enjoy StorJDash, you can support it by donating StorJ Tokens or ETH to:
 
