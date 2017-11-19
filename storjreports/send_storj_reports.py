@@ -7,6 +7,7 @@ import re
 import uuid
 import subprocess
 import pkg_resources
+import multiprocessing
 
 
 from os import scandir
@@ -29,10 +30,16 @@ def examine_configs(path, windows=False):
     #storj_node_pairs = None
     #print(storj_node_pairs)
     report_uuid = str(uuid.uuid4())
-    config_files = os.scandir(path)
-    for config_file in config_files:
+    potential_config_files = os.scandir(path)
+    mp_args = []
+    for config_file in potential_config_files:
         if config_file.is_file():
-            send_report(config_file, report_uuid, storj_node_pairs, version, windows)
+           mp_args.append([config_file.name, config_file.path, report_uuid, storj_node_pairs, version, windows])
+
+    pool = multiprocessing.Pool()
+
+    results = pool.starmap(send_report, mp_args)
+    print(results)
     print('All reports sent')
 
 def get_size_of_path(path):
@@ -76,21 +83,21 @@ def examine_storjstatus():
             node_pairs[node_path] = node_id
     return node_pairs
 
-def send_report(config_file, report_uuid, storj_node_pairs, version, windows):
-    node_name = config_file.name.split('.')[0]
+def send_report(config_file_name, config_file_path, report_uuid, storj_node_pairs, version, windows):
+    node_name = config_file_name.split('.')[0]
     try:
-        open_config_file = open(config_file.path, 'r', encoding='utf-8')
+        open_config_file = open(config_file_path, 'r', encoding='utf-8')
         config_contents = open_config_file.read()
     except UnicodeDecodeError:
         try:
-            open_config_file = open(config_file.path, 'r', encoding='latin-1')
+            open_config_file = open(config_file_path, 'r', encoding='latin-1')
             config_contents = open_config_file.read()
         except UnicodeDecodeError:
             try:
-                open_config_file = open(config_file.path, 'r')
+                open_config_file = open(config_file_path, 'r')
                 config_contents = open_config_file.read()
             except UnicodeDecodeError:
-                print('Unable to read config file: ' + config_file.path)
+                print('Unable to read config file: ' + config_file_path)
                 return
 
     config_contents = re.sub(r'\\\n', '', config_contents)
@@ -154,6 +161,7 @@ def send_report(config_file, report_uuid, storj_node_pairs, version, windows):
             pass
 
     requests.post('https://www.storjdash.com/report', json=report_json)
+    return report_json
 
 def main():
     global SERVER_UUID
