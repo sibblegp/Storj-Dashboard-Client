@@ -48,14 +48,22 @@ def get_size_of_path(path):
     except FileNotFoundError:
         print('Path does not exist: ' + path)
         return 0
+    except PermissionError:
+        print('Access Denied' + path)
+        return 0
     size = 0
     for item in details:
         if item.is_dir():
-            size += get_size_of_path(item.path)
+            try:
+                size += get_size_of_path(item.path)
+            except PermissionError:
+                pass
         else:
             try:
                 size += item.stat().st_size
             except FileNotFoundError:
+                pass
+            except PermissionError:
                 pass
     return size
 
