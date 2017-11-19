@@ -2,7 +2,7 @@
 
 from setuptools import setup
 
-VERSION = '0.3.6'
+VERSION = '0.3.7'
 
 setup(name='storjdash',
       version=VERSION,

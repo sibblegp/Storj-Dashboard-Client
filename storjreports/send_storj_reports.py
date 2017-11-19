@@ -103,7 +103,7 @@ def send_report(config_file, report_uuid, storj_node_pairs, version, windows):
         json_config = json.loads(regexed_config)
     except json.JSONDecodeError:
         try:
-            config_contents = re.sub(r'https.*\n', '"', regexed_config)
+            regexed_config = re.sub(r'https.*\n', '"', regexed_config)
             json_config = json.loads(regexed_config)
         except json.JSONDecodeError:
             print('Unable to decode JSON file: ' + config_file.name)
@@ -116,14 +116,17 @@ def send_report(config_file, report_uuid, storj_node_pairs, version, windows):
         print('Missing Keys in Config File')
         return False
     current_size = get_size_of_path(storage_path)
-    if 'GB' in capacity_line:
-        capacity_gb = float(capacity_line.split('GB')[0])
-        capacity = capacity_gb * 1000 * 1000000
-    elif 'TB' in capacity_line:
-        capacity_gb = float(capacity_line.split('TB')[0])
-        capacity = float(capacity_gb * 1000 * 1000 * 1000000)
+    if type(capacity_line) != int:
+        if 'GB' in capacity_line:
+            capacity_gb = float(capacity_line.split('GB')[0])
+            capacity = capacity_gb * 1000 * 1000000
+        elif 'TB' in capacity_line:
+            capacity_gb = float(capacity_line.split('TB')[0])
+            capacity = float(capacity_gb * 1000 * 1000 * 1000000)
+        else:
+            capacity = float(capacity_line.split('B')[0])
     else:
-        capacity = float(capacity_line.split('B')[0])
+        capacity = float(capacity_line)
 
     report_json = {
         'server_uuid': SERVER_UUID,
@@ -143,9 +146,12 @@ def send_report(config_file, report_uuid, storj_node_pairs, version, windows):
     print('Sending report for node ' + node_name)
     print(report_json)
     if windows is True:
-        import servicemanager
-        servicemanager.LogInfoMsg('Sending report for node' + node_name)
-        servicemanager.LogInfoMsg(str(report_json))
+        try:
+            import servicemanager
+            servicemanager.LogInfoMsg('Sending report for node' + node_name)
+            servicemanager.LogInfoMsg(str(report_json))
+        except ImportError:
+            pass
 
     requests.post('https://www.storjdash.com/report', json=report_json)
 
@@ -181,8 +187,12 @@ def windows_main():
             print(configs_directory)
             examine_configs(configs_directory, windows=True)
         except FileNotFoundError:
-            print('Registry Keys Missing. Server not properly setup.')
-            exit(1)
+            try:
+                import servicemanager
+                servicemanager.LogInfoMsg('Registry Keys Missing. Server not properly setup.')
+                exit(1)
+            except ImportError:
+                exit(1)
     except ImportError:
         print('Unable to import winreg. Are you on the right OS?')
         exit(1)
