@@ -121,7 +121,7 @@ def send_report(config_file_name, config_file_path, report_uuid, storj_node_pair
             regexed_config = re.sub(r'https.*\n', '"', regexed_config)
             json_config = json.loads(regexed_config)
         except json.JSONDecodeError:
-            print('Unable to decode JSON file: ' + config_file.name)
+            print('Unable to decode JSON file: ' + config_file_name)
             return False
 
     try:
