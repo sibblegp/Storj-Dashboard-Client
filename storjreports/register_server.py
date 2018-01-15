@@ -80,7 +80,7 @@ def find_storjshare():
     results = proc.communicate()
     possible_path = results[0].decode('utf-8').replace('\n', '')
     if '/' in possible_path:
-        STORJSHAREPATH = possible_path
+        STORJSHAREPATH = possible_path.split('storjshare')[0][:-1]
         return
     user_directories = scandir('/home')
 
