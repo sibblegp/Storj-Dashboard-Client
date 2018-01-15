@@ -8,9 +8,11 @@ import uuid
 import subprocess
 import pkg_resources
 import multiprocessing
+import traceback
 
 
 from os import scandir
+from time import sleep
 
 SERVER_UUID = None
 STORJSHARE_PATH = None
@@ -39,6 +41,7 @@ def examine_configs(path, windows=False):
     pool = multiprocessing.Pool()
 
     results = pool.starmap(send_report, mp_args)
+    sleep(60)
     print(results)
     print('All reports sent')
 
@@ -92,84 +95,90 @@ def examine_storjstatus():
     return node_pairs
 
 def send_report(config_file_name, config_file_path, report_uuid, storj_node_pairs, version, windows):
-    node_name = config_file_name.split('.')[0]
     try:
-        open_config_file = open(config_file_path, 'r', encoding='utf-8')
-        config_contents = open_config_file.read()
-    except UnicodeDecodeError:
+        node_name = config_file_name.split('.')[0]
         try:
-            open_config_file = open(config_file_path, 'r', encoding='latin-1')
+            open_config_file = open(config_file_path, 'r', encoding='utf-8')
             config_contents = open_config_file.read()
         except UnicodeDecodeError:
             try:
-                open_config_file = open(config_file_path, 'r')
+                open_config_file = open(config_file_path, 'r', encoding='latin-1')
                 config_contents = open_config_file.read()
             except UnicodeDecodeError:
-                print('Unable to read config file: ' + config_file_path)
-                return
+                try:
+                    open_config_file = open(config_file_path, 'r')
+                    config_contents = open_config_file.read()
+                except UnicodeDecodeError:
+                    print('Unable to read config file: ' + config_file_path)
+                    return
 
-    config_contents = re.sub(r'\\\n', '', config_contents)
-    regexed_config = ''
-    for line in config_contents.split('\n'):
-        if 'https' not in line:
-            regexed_config += (re.sub(r'//.*', '', line) + '\n')
-    #print(regexed_config)
-    try:
-        json_config = json.loads(regexed_config)
-    except json.JSONDecodeError:
+        config_contents = re.sub(r'\\\n', '', config_contents)
+        regexed_config = ''
+        for line in config_contents.split('\n'):
+            if 'https' not in line:
+                regexed_config += (re.sub(r'//.*', '', line) + '\n')
+        #print(regexed_config)
         try:
-            regexed_config = re.sub(r'https.*\n', '"', regexed_config)
             json_config = json.loads(regexed_config)
         except json.JSONDecodeError:
-            print('Unable to decode JSON file: ' + config_file_name)
+            try:
+                regexed_config = re.sub(r'https.*\n', '"', regexed_config)
+                json_config = json.loads(regexed_config)
+            except json.JSONDecodeError:
+                print('Unable to decode JSON file: ' + config_file_name)
+                return False
+
+        try:
+            storage_path = json_config['storagePath']
+            capacity_line = json_config['storageAllocation']
+        except KeyError:
+            print('Missing Keys in Config File')
             return False
 
-    try:
-        storage_path = json_config['storagePath']
-        capacity_line = json_config['storageAllocation']
-    except KeyError:
-        print('Missing Keys in Config File')
-        return False
-    current_size = get_size_of_path(storage_path)
-    if type(capacity_line) != int:
-        if 'GB' in capacity_line:
-            capacity_gb = float(capacity_line.split('GB')[0])
-            capacity = capacity_gb * 1000 * 1000000
-        elif 'TB' in capacity_line:
-            capacity_gb = float(capacity_line.split('TB')[0])
-            capacity = float(capacity_gb * 1000 * 1000 * 1000000)
+        current_size = get_size_of_path(storage_path)
+
+        if type(capacity_line) != int:
+            if 'GB' in capacity_line:
+                capacity_gb = float(capacity_line.split('GB')[0])
+                capacity = capacity_gb * 1000 * 1000000
+            elif 'TB' in capacity_line:
+                capacity_gb = float(capacity_line.split('TB')[0])
+                capacity = float(capacity_gb * 1000 * 1000 * 1000000)
+            else:
+                capacity = float(capacity_line.split('B')[0])
         else:
-            capacity = float(capacity_line.split('B')[0])
-    else:
-        capacity = float(capacity_line)
+            capacity = float(capacity_line)
 
-    report_json = {
-        'server_uuid': SERVER_UUID,
-        'report_uuid': report_uuid,
-        'node_name': node_name,
-        'current_size': current_size,
-        'node_capacity': capacity,
-        'version': version
-    }
+        report_json = {
+            'server_uuid': SERVER_UUID,
+            'report_uuid': report_uuid,
+            'node_name': node_name,
+            'current_size': current_size,
+            'node_capacity': capacity,
+            'version': version
+        }
 
-    if windows is False:
-        if storage_path in storj_node_pairs.keys():
-            report_json['storj_node_id'] = storj_node_pairs[storage_path]
-    else:
-        report_json['storj_node_id'] = node_name
+        if windows is False:
+            if storage_path in storj_node_pairs.keys():
+                report_json['storj_node_id'] = storj_node_pairs[storage_path]
+        else:
+            report_json['storj_node_id'] = node_name
 
-    print('Sending report for node ' + node_name)
-    print(report_json)
-    if windows is True:
-        try:
-            import servicemanager
-            servicemanager.LogInfoMsg('Sending report for node' + node_name)
-            servicemanager.LogInfoMsg(str(report_json))
-        except ImportError:
-            pass
+        print('Sending report for node ' + node_name)
+        print(report_json)
+        if windows is True:
+            try:
+                import servicemanager
+                servicemanager.LogInfoMsg('Sending report for node' + node_name)
+                servicemanager.LogInfoMsg(str(report_json))
+            except ImportError:
+                pass
 
-    requests.post('https://www.storjdash.com/report', json=report_json)
-    return report_json
+        requests.post('https://www.storjdash.com/report', json=report_json)
+        return report_json
+    except Exception as e:
+        print(e)
+        return traceback.format_exc()
 
 def main():
     global SERVER_UUID
