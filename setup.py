@@ -13,7 +13,7 @@ setup(name='storjdash',
       python_requires='>=3.5',
       url='https://github.com/sibblegp/Storj-Dashboard-Client',
       install_requires=[
-            'requests==2.18.4',
+            'requests==2.20.0',
             'python-crontab==2.2.5'
       ],
       entry_points={
